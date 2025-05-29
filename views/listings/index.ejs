@@ -1,0 +1,232 @@
+<% layout('layouts/boilerplate') %>
+
+
+  <style>
+    #filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter {
+      margin-right: 2rem;
+      text-align: center;
+      margin-top: 2rem;
+      opacity: 0.8;
+    }
+
+    .filter:hover {
+      opacity: 1;
+      cursor: pointer;
+    }
+
+    .filter p {
+
+      font-size: 0.8rem
+    }
+
+    .text-muted {
+      display: none;
+    }
+
+    .taxfilter {
+      border: 1px solid #ccc;
+      border-radius: 1rem;
+      height: 3rem;
+      padding: 1rem;
+      margin-left: 5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    #index {
+      display: flex;
+    }
+  </style>
+
+
+
+
+  <div id="filters">
+    <div class="filter">
+
+      <i class="fa-solid fa-fire"></i>
+      <p>Trending</p>
+
+    </div>
+    <div class="filter">
+
+      <i class="fa-solid fa-bed"></i>
+      <p>Rooms</p>
+
+    </div>
+    <div class="filter">
+
+      <i class="fa-solid fa-mountain-city"></i>
+      <p>Iconic Cities</p>
+
+    </div>
+    <div class="filter">
+
+      <i class="fa-solid fa-chess-rook"></i>
+      <p>Castles</p>
+
+    </div>
+    <div class="filter">
+
+      <i class="fa-solid fa-person-swimming"></i>
+      <p>Poolside</p>
+
+    </div>
+    <div class="filter">
+
+      <i class="fa-solid fa-campground"></i>
+      <p>Camping</p>
+
+    </div>
+    <div class="filter">
+
+      <i class="fa-solid fa-cow"></i>
+      <p> Farms </p>
+
+    </div>
+    <div class="filter">
+
+      <i class="fa-solid fa-snowflake"></i>
+      <p> Arctic </p>
+
+    </div>
+    <div class="filter">
+
+      <i class="fa-solid fa-igloo"></i>
+      <p> Domes </p>
+
+    </div>
+    <div class="filter">
+
+      <i class="fa-solid fa-ship"></i>
+      <p> Boats </p>
+
+    </div>
+    <div class="taxfilter">
+      <div class="form-check form-switch d-flex align-items-center " style="gap: 50px;">
+        <label class="form-check-label order-1" for="flexSwitchCheckDefault">Display total after taxes</label>
+        <input class="form-check-input order-2" type="checkbox" id="flexSwitchCheckDefault">
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1 g- mt-3 " id="index">
+    <% for (let list of listings) { %>
+      <a href="/listings/<%= list._id %>" class="listing-link">
+
+        <div class="col ">
+          <div class="card h-100 listing-card" style="width: 20rem">
+            <img src="<%= list.image.url %>" class="card-img-top" alt="listing_image" style="height: 20rem">
+            <div class="card-img-overlay"></div>
+            <div class="card-body">
+              <p class="card-text"> <b>
+                  <%= list.title %>
+                </b> <br> &#8360 <%= list.price.toLocaleString('en-PK') %>
+                  <i class="text-muted"> &nbsp; &nbsp;+18% gst</i>
+              </p>
+            </div>
+          </div>
+        </div>
+      </a>
+      <% } %>
+  </div>
+
+
+  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1 g- mt-3 " id="filtered"></div>
+
+
+
+  <script>
+
+    const listings = <%- JSON.stringify(listings) %>;
+
+
+
+    let taxSwithch = document.getElementById('flexSwitchCheckDefault');
+    taxSwithch.addEventListener('click', () => {
+      let tax = document.querySelectorAll('.text-muted');
+      tax.forEach((el) => {
+        if (taxSwithch.checked) {
+          el.style.display = 'inline';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    });
+
+    let filters = document.querySelectorAll('.filter');
+
+    filters.forEach((el) => {
+      el.addEventListener('click', () => {
+        let index = document.getElementById('index').style.display = 'none';
+        let filterelement = el.querySelector('p').innerText;
+        let filterlistings = listings.filter(list => list.catagory == filterelement)
+        let filtered = document.getElementById('filtered');
+          filtered.innerHTML = '';
+        
+        filterlistings.forEach(filterlist => {
+
+          // Create anchor tag
+          const a = document.createElement('a');
+          a.href = `/listings/${filterlist._id}`;
+          a.className = 'listing-link';
+
+          // Create column div
+          const colDiv = document.createElement('div');
+          colDiv.className = 'col';
+
+          // Create card
+          const cardDiv = document.createElement('div');
+          cardDiv.className = 'card h-100 listing-card';
+          cardDiv.style.width = '20rem';
+
+          // Image
+          const img = document.createElement('img');
+          if (filterlist.image && filterlist.image.url) {
+            img.src = filterlist.image.url;
+          } else {
+            // Set a fallback image if not available
+            img.src = 'https://via.placeholder.com/300x200?text=No+Image';
+          }
+
+          console.log(filterlist.image.url);
+          img.alt = 'listing_image';
+          img.className = 'card-img-top';
+          img.style.height = '20rem';
+
+          // Image overlay
+          const overlay = document.createElement('div');
+          overlay.className = 'card-img-overlay';
+
+          // Card body
+          const cardBody = document.createElement('div');
+          cardBody.className = 'card-body';
+
+          // Price text
+          const price = filterlist.price.toLocaleString('en-PK');
+          const para = document.createElement('p');
+          para.className = 'card-text';
+          para.innerHTML = `<b>${filterlist.title}</b> <br> &#8360; ${price} <i class="text-muted"> &nbsp; &nbsp;+18% gst</i>`;
+
+          // Build structure
+          cardBody.appendChild(para);
+          cardDiv.appendChild(img);
+          cardDiv.appendChild(overlay);
+          cardDiv.appendChild(cardBody);
+          colDiv.appendChild(cardDiv);
+          a.appendChild(colDiv);
+          filtered.appendChild(a);
+        });
+
+      });
+    });
+  </script>
