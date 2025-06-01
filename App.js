@@ -10,7 +10,7 @@ if(process.env.NODE_ENV !== "production") {
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const port = 3000;
+const port = process.env.PORT;
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
@@ -48,7 +48,7 @@ app.engine("ejs", ejsMate);
 
 const store = MongoStore.create({
   mongoUrl: dbUrl,
-  crypro:{
+  crypto:{
     secret:process.env.SECRET
   },
   touchAfter:24*3600,
