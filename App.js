@@ -54,8 +54,8 @@ const store = MongoStore.create({
   touchAfter:24*3600,
 })
 
-store.on("error", () =>{
-  console.log("Session store error",err);
+store.on("error", function (err) {
+  console.log("Session store error", err);
 })
 
 const sessionConfig = {
@@ -69,6 +69,9 @@ const sessionConfig = {
     httpOnly: true,
   },
 };
+
+console.log("ATLAS_URL:", process.env.ATLAS_URL);
+console.log("SECRET:", process.env.SECRET);
 
 
 app.use(session(sessionConfig));
